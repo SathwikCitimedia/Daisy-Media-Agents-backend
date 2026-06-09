@@ -44,6 +44,22 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
+## Docker
+
+Build the image:
+
+```bash
+docker build -t daisy-media-agents-backend .
+```
+
+Run the container:
+
+```bash
+docker run --env-file .env -p 8000:8000 daisy-media-agents-backend
+```
+
+For production, prefer `STORAGE_BACKEND=postgres` and provide a valid `DATABASE_URL`.
+
 ## Local Commands
 
 ```bash
