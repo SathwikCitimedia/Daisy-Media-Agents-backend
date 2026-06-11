@@ -92,6 +92,85 @@ Set `ALLOW_AGENT_MOCK_FALLBACK=true` only for development if you want the workfl
 6. `POST /sessions/{session_id}/steps/{step_id}/retry` retries a failed step with its original task.
 7. `POST /sessions/{session_id}/cancel` cancels the workflow.
 
+## Agent Inputs
+
+- `atlas`
+  - Receives the original session URL.
+  - Task pattern: `Analyze this brand URL for strategic brand intelligence: {url}`
+- `audit`
+  - Receives the original session URL.
+  - Task pattern: `Perform a detailed brand audit for this URL: {url}`
+- `media_planner`
+  - Starts only after both `atlas` and `audit` are approved.
+  - Receives a mapped payload built from approved `atlas` and `audit` outputs:
+  - `atlas` approved output is mapped into `brand_intelligence`, which may include:
+    `brand_name`, `industry`, `primary_geo`, `business_model`, `report_type`, `tier`, `overall_score`, `grade`, `summary`, `headline`, `top_priorities`, `strategic_gaps`, `paid_media_status`, `geo_insight`, `geofit_score`, `competitive_summary`, `competitors`, `measurement_maturity`, `recommended_actions`, `locations`
+  - `audit` approved output is mapped into `audit_findings`, which may include:
+    `audit_id`, `summary`, `findings`, `strengths`, `weaknesses`, `recommendations`, `priority_actions`, `seo`, `local_seo`, `conversion`, `performance`, `technical_issues`, `compliance`, `competitors_mentioned`, `cities_mentioned`
+```json
+{
+  "url": "https://example.com",
+  "brand_intelligence": {
+    "brand_name": "...",
+    "industry": "...",
+    "summary": "...",
+    "top_priorities": [],
+    "strategic_gaps": [],
+    "competitors": [],
+    "recommended_actions": [],
+    "locations": []
+  },
+  "audit_findings": {
+    "summary": "...",
+    "findings": [],
+    "recommendations": [],
+    "technical_issues": [],
+    "cities_mentioned": []
+  }
+}
+```
+- `geo_fence`
+  - Starts only after `media_planner` is approved.
+  - Receives a compact mapped payload built from the approved `media_planner` output:
+```json
+{
+  "url": "https://example.com",
+  "brand_name": "...",
+  "primary_location": "...",
+  "country": "...",
+  "target_locations": [],
+  "geofence_zones": [],
+  "audience_segments": [],
+  "campaign_objective": "...",
+  "budget": 0,
+  "duration": "...",
+  "recommended_channels": []
+}
+```
+- `meta`
+  - Starts only after `media_planner` is approved.
+  - Receives a compact mapped payload built from the approved `media_planner` output:
+```json
+{
+  "url": "https://example.com",
+  "brand_name": "...",
+  "campaign_name": "...",
+  "campaign_objective": "...",
+  "target_audience": "...",
+  "locations": [],
+  "budget": 0,
+  "daily_budget": 0,
+  "duration": "...",
+  "ad_sets": [],
+  "ad_creatives": [],
+  "placements": [],
+  "special_ad_categories": [],
+  "country": "..."
+}
+```
+
+The exact mapped inputs are also exposed in the session response as `mapped_input_preview` for `media_planner`, `geo_fence`, and `meta` when workflow payload debugging is enabled.
+
 ## Step Statuses
 
 - `PENDING`
