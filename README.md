@@ -4,16 +4,20 @@ FastAPI backend for orchestrating a staged multi-agent workflow with session-bas
 
 ## Features
 
-- Session-based workflow state for every request
-- Parallel execution of Atlas and Audit
-- Approval-driven execution of Media Planner, then Geo Fence and Meta
-- In-memory repository abstraction that can later be replaced with PostgreSQL
-- Async external agent calls using `httpx`
-- DaisyNova agents use Bearer-authenticated `/run` requests
-- Exponential backoff retries and per-agent timeouts for external calls
-- Structured logging for workflow and step transitions
-- Pydantic request and response models
-- CORS enabled for frontend integration
+- Session-based orchestration for multi-step media workflows
+- Parallel Atlas and Audit execution for faster initial analysis
+- Human approval gates before downstream planning agents run
+- Re-run, retry, and reject flows for improving agent outputs without restarting the session
+- Automated handoff from approved Atlas and Audit outputs into Media Planner
+- Geo Fence and Meta agents triggered from approved media plans
+- Frontend-ready polling and WebSocket workflow updates
+- Mapped input previews for debugging downstream agent payloads
+- Bearer-authenticated DaisyNova `/run` agent calls with async `httpx`
+- Per-agent timeouts, exponential backoff retries, and optional development mock fallback
+- Repository abstraction with in-memory development storage and PostgreSQL support
+- Structured logging for session, workflow, and step status transitions
+- Typed FastAPI contracts using Pydantic models
+- CORS support for frontend integration
 
 ## Project Structure
 
